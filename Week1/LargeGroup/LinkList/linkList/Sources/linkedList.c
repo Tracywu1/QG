@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "linkedList.h"
-LinkedList* L;
+LinkedList *L;
 
 /*接口函数*/
 
@@ -13,11 +13,11 @@ LinkedList* L;
  *	@return		 : Status
  *  @notice      : None
  */
-Status InitList(LinkedList *L){
-	if(*L!=NULL)return OVERFLOW;
-	*L = (LinkedList)malloc(sizeof (LNode));
+Status InitList(LinkedList* L) {
+	if (*L != NULL)return OVERFLOW;
+	*L = (LinkedList)malloc(sizeof(LNode));
 	if (!(*L))return ERROR;
-	(*L)->next = NULL;//头指针暂时指向一个空节点
+	(*L)->next = *L;
 	return SUCCESS;
 }
 
@@ -28,13 +28,18 @@ Status InitList(LinkedList *L){
  *	@return		 : None
  *  @notice      : None
  */
-void DestroyList(LinkedList *L) {
-	LNode* psave= (*L);
-		while (psave) {
-			psave = psave->next;//保存下一个节点的地址
-			free((*L));//释放当前节点
-			(*L) = psave;//前进至下一个节点
-		}
+void DestroyList(LinkedList* L) {
+	LinkedList p = NULL;
+	p = (*L)->next;
+	while (p != (*L))
+	{
+		(*L)->next = p->next;
+		free(p);
+		p = (*L)->next;
+	}
+	free(*L);
+	*L = NULL;
+	printf("恭喜您，您已成功销毁链表！");
 }
 
 /**
@@ -45,7 +50,7 @@ void DestroyList(LinkedList *L) {
  *  @notice      : None
  */
 Status InsertList(LNode* p, LNode* q) {
-	if (p == NULL||q == NULL)return ERROR;
+	if (p == NULL || q == NULL)return ERROR;
 	q->next = p->next;
 	p->next = q;
 	return SUCCESS;
@@ -59,7 +64,7 @@ Status InsertList(LNode* p, LNode* q) {
  *  @notice      : None
  */
 Status DeleteList(LNode* p, ElemType* e) {
-	if (p == NULL || p->next == NULL)return ERROR;
+	if (p == NULL || p->next == L)return ERROR;
 	LNode* t = p->next;
 	*e = t->data;
 	p->next = t->next;
@@ -75,14 +80,15 @@ Status DeleteList(LNode* p, ElemType* e) {
  *  @notice      : None
  */
 void TraverseList(LinkedList L, void (*visit)(ElemType e)) {
-	LNode* p=L->next;
-	while (p) {
+	LNode* p = L->next;
+	printf("链表中元素的排列为：\n");
+	while (p != L) {
 		visit(p->data);//把函数应用于链表的项
 		p = p->next;//前进到下一项
 	}
 }
 void visit(ElemType e) {
-	printf("%d", e);
+	printf("%d\t", e);
 }
 
 /**
@@ -93,11 +99,12 @@ void visit(ElemType e) {
  *  @notice      : None
  */
 Status SearchList(LinkedList L, ElemType e) {
-	if (L->next == NULL) return ERROR;
+	if (L->next == L) return ERROR;
 	LNode* p = L->next;
-	while (p->data != e && p != NULL) {
+	while (p != L && p->data != e) {
 		p = p->next;//根据e值寻找数据域的值为e的节点
 	}
+	if (p == L)return ERROR;
 	return SUCCESS;
 }
 
@@ -108,22 +115,28 @@ Status SearchList(LinkedList L, ElemType e) {
  *	@return		 : Status
  *  @notice      : None
  */
-Status ReverseList(LinkedList *L) {
-	LinkedList p, r, q;
-	p = NULL;
-	r = (*L)->next;
-	q = r->next;
-	if (r == NULL || q == NULL)
-		return;
-	while (q) {
-		r->next = p;
-		p = r;
-		r = q;
-		q = q->next;
+Status ReverseList(LinkedList* L) {
+	LinkedList p1 = NULL, p2 = NULL, p3 = NULL;
+	p1 = (*L)->next;
+	p2 = p1->next;
+	if (*L == p1)
+	{
+		return ERROR;
 	}
-	r->next = p;
-	(*L)->next = r;
-	printf("\n");
+	else if (*L == p2) {
+		return SUCCESS;
+	}
+	p3 = p2->next;
+	while (p3 != (*L))
+	{
+		p2->next = p1;//反转指针
+		p1 = p2;
+		p2 = p3;//p1,p2向后移动
+		p3 = p3->next;//保存p3的下一个节点
+	}
+	p2->next = p1;
+	(*L)->next->next = *L;
+	(*L)->next = p2;//将p2插入链表的循环中
 	return SUCCESS;
 }
 
@@ -135,8 +148,8 @@ Status ReverseList(LinkedList *L) {
  *  @notice      : None
  */
 Status IsLoopList(LinkedList L) {
-	if ( L == NULL || L->next == NULL)return ERROR;
-	LNode *fast, *slow;
+	if (L == NULL || L->next == NULL)return ERROR;
+	LNode* fast, * slow;
 	fast = slow = L;
 	fast = fast->next->next;
 	slow = slow->next;
@@ -158,20 +171,22 @@ Status IsLoopList(LinkedList L) {
  *  @notice      : choose to finish
  */
 LNode* ReverseEvenList(LinkedList* L) {
-	LNode* pre, * cur, * Next;		//定义前中后指针，用途和反转相似
-	pre = *L;
-	*L = pre->next;
-	while (pre && pre->next) {
-		cur = pre->next;
-		Next = cur->next;
-		if (cur->next && cur->next->next) {			//如果cur->next不存在，结点个数为偶数
-			pre->next = cur->next->next;			//如果cur->next->next不存在，结点个数为奇数
+	LinkedList p1 = NULL, p2 = *L, p3 = (*L)->next;
+	p1 = *L;
+	p2 = p2->next;
+	p3 = p3->next;
+	while (p3!=*L) {
+		if ((p3->data) % 2 == 0) {
+			p2->next = p3->next;
+			p3->next = p2;
+			p1->next = p3;
+			p1 = p1->next;
+			p3 = p3->next->next;
+		}else {
+			p1 = p1->next;
+			p2 = p2->next;
+			p3 = p3->next;
 		}
-		else {										//如果都存在，遍历未结束
-			pre->next = cur->next;
-		}
-		cur->next = pre;							//将偶数结点反转
-		pre = Next;
 	}
 	return *L;
 }
@@ -183,14 +198,14 @@ LNode* ReverseEvenList(LinkedList* L) {
  *	@return		 : LNode
  *  @notice      : choose to finish
  */
-LNode* FindMidNode(LinkedList *L) {
-	if ((*L) == NULL || (*L)->next == NULL) return (*L);
-	LNode *mid, *fast;
-	mid = fast = (*L);
-	while (fast != NULL) {
-		if (fast->next == NULL)fast = fast->next;
-		else fast = fast->next->next;
-		mid = mid->next;
+LNode* FindMidNode(LinkedList* L) {
+	LNode* fast = *L, * slow = *L;
+	while (fast->next != *L && fast->next->next != *L) {
+		fast = fast->next->next;
+		slow = slow->next;
 	}
-	return mid;
+	if (fast->next->next == *L) {
+		return slow->next;
+	}
+	return slow;
 }

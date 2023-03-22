@@ -2,60 +2,54 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include"linkedList.h"
-LinkedList L = NULL;
+LinkedList L=NULL;
 LNode* in = NULL;
 void visit(ElemType e);
 void TraverseList(LinkedList L, void (*visit)(ElemType e));
-LNode* SearchEle(LinkedList L);
+LNode* SearchEle(LinkedList L, int ele);
+int JudgeInput();
 
-int ListLength(LinkedList L) {
-	LNode* p = L->next; // 指针p 指向首元结点
-	int i = 0; //
-	while (p) { // 当前结点不为空
-		p = p->next;
-		i++; // 长度 +1
-	}
-	return i;
-}
-
-LinkedList CreateList( ) { 
+LinkedList CreateList(LinkedList* L) {
+	InitList(L);
 	printf("请输入您要创建的链表的元素的个数：");
-	int n;
-	scanf("%d", &n);
+	int n = JudgeInput();
 	LNode* s;
 	LNode* p;
-	Status status = InitList(&L);
-	p = L; 
+	p = *L;
 	for (int j = 0; j < n; j++) {
-	    s = (LNode*)malloc(sizeof(LNode));// 生成新结点
+		s = (LNode*)malloc(sizeof(LNode));// 生成新结点
 		printf("\ninput -> element: ");
-		scanf("%d", &s->data);
-		s->next = p->next; 
+		s->data = JudgeInput();
+		s->next = p->next;
 		p->next = s;
 		p = p->next;
 		if (j == n - 1)
 		{
-			p->next = NULL;
+			p->next = *L;
 		}
 	}
-	return L;
+	printf("恭喜您！链表已成功创建！\n");
+	return *L;
 }
 
-void JudgeLoop(L) {
+void JudgeLoop(LinkedList L) {
 	if (IsLoopList(L))
 		printf("该链表是循环链表");
 	else
 		printf("该链表不是循环链表");
 }
 
-void DeleteEle(LinkedList*L) {
+void DeleteEle(LinkedList* L) {
+	if ((*L)->next == NULL) {
+		printf("请先创建链表再尝试删除链表中的元素。\n");
+		return;
+	}
 	printf("请您输入您想要删除的元素之前的元素：\n");
 	while (1) {
-		int ele;
-		scanf("%d", &ele);
-		LNode* before = SearchEle(*L,ele);
-		if (before==NULL) {
-			printf("您输入的元素不在该链表中，请重新输入！");
+		int ele = JudgeInput();
+		LNode* before = SearchEle(*L, ele);
+		if (before == NULL) {
+			printf("您输入的元素不在该链表中，请重新输入！\n");
 			continue;
 		}
 		else {
@@ -65,7 +59,7 @@ void DeleteEle(LinkedList*L) {
 				break;
 			}
 			else {
-				printf("对不起,删除失败！");
+				printf("对不起,删除失败！\n");
 				break;
 			}
 		}
@@ -75,108 +69,147 @@ void DeleteEle(LinkedList*L) {
 
 void InsertEle(LinkedList* L) {
 	printf("请您输入您想要插入的元素：\n");
-	int ele;
-	scanf("%d", &ele);
+	int ele = JudgeInput();
 	LNode* in = (LNode*)malloc(sizeof(LNode));
 	in->data = ele;
 	in->next = NULL;
 	printf("请问您想将其插入哪个元素之后？\n");
 	while (1) {
-		int ele1;
-		scanf("%d", &ele1);
-		if (!(SearchList(*L, ele1))) {
+		int ele1 = JudgeInput();
+		if (SearchList(*L, ele1)==0) {
 			printf("您输入的元素不在该链表中，请重新输入！");
 			continue;
 		}
-		LNode* before = SearchEle(*L,ele1);
-		if (InsertList(before, in))
-			printf("恭喜您，您已插入成功！\n");
-		break;
+		else {
+			LNode* before = SearchEle(*L, ele1);
+			if (InsertList(before, in))
+				printf("恭喜您，您已插入成功！\n");
+			break;
+		}
 	}
 	TraverseList(*L, visit);
 }
 
-LNode* SearchEle(LinkedList L,int ele) {
+LNode* SearchEle(LinkedList L, int ele) {
 	LNode* p = L->next;
-	while (p->data != ele && p != NULL) {
+	while ((p != L) && (p->data != ele)) {
 		p = p->next;
 	}
-	if (p == NULL) {
-		printf("该链表中不存在该元素\n");
+	if (p == L) {
+
 		return NULL;
 	}
 	else {
-		printf("该链表存在该元素\n");
 		return p;
 	}
 }
 
 void FindMid(LinkedList L) {
-	LNode* mid=FindMidNode( &L);
-	printf("该元素为：%d\n", mid->data);
+	LNode* mid = FindMidNode(&L);
+	printf("该链表的中间元素为：%d\n", mid->data);
 }
 
-	void DisplayMenu() {
-		printf("************************************************************\n");
-		printf("   a.创建单链表                           b.打印链表\n");
-		printf("************************************************************\n");
-		printf("   c.删除某一元素之后的元素               d.插入某一元素\n");
-		printf("************************************************************\n");
-		printf("   e.反转链表                             f.元素奇偶调换\n");
-		printf("************************************************************\n");
-		printf("   g.判断是否为循环链表                   h.查询是否存在某一元素\n");
-		printf("************************************************************\n");
-		printf("   i.查询该链表的中间元素                 j.exit\n");
-		printf(" -------------------------------------------------------------\n");
+int JudgeInput() {
+	int ele;
+	while (scanf("%d", &ele) != 1)
+	{
+		while (getchar() != '\n');
+		printf("\n请输入整数.\n");
 	}
+	return ele;
+}
 
-	
-	int main() {
+void DisplayMenu() {
+	printf("\n");
+	printf("************************************************************\n");
+	printf("   1.创建单链表                           2.打印链表\n");
+	printf("************************************************************\n");
+	printf("   3.删除某一元素之后的元素               4.插入某一元素\n");
+	printf("************************************************************\n");
+	printf("   5.反转链表                             6.元素奇偶调换\n");
+	printf("************************************************************\n");
+	printf("   7.判断是否为循环链表                   8.查询是否存在某一元素\n");
+	printf("************************************************************\n");
+	printf("   9.查询该链表的中间元素                 10.销毁链表\n");
+	printf("************************************************************\n");
+	printf("                            11.exit\n");
+	printf(" -------------------------------------------------------------\n");
+	printf("请选择您需要的操作(1~11)：\n");
+}
+
+
+int main() {
+	while (1) {
 		DisplayMenu();
-		while (1) {
-			char select;
-			scanf(" %c", &select);
-			if (!((select >= 'a') && (select <= 'j')))
-			{
-				printf("输入错误！请再次输入！\n");
-				continue;
-			}
-			switch (select)
-			{
-			case 'a':
-				CreateList(5);
-				break;
-			case 'b':
-				TraverseList(L, visit);
-				break;
-			case 'c':
-				DeleteEle(&L);
-				break;
-			case 'd':
-				InsertEle(&L);
-				break;
-			case 'e':
-				ReverseList(&L);
-				TraverseList(L, visit);
-				break;
-			case 'f':
-				ReverseEvenList(&L);
-				break;
-			case 'g':
-				JudgeLoop(L);
-				break;
-			case 'h':
-				printf("请您输入您想要查询的元素：\n");
-				int ele;
-				scanf("%d", &ele);
-				SearchEle(L,ele);
-				break;
-			case 'i':
-				FindMid(L);
-				break;
-			case 'j':
-				return 0;
-			}
-		
+		short choice;
+		while ((scanf("%hd", &choice) != 1) || choice < 1 || choice > 11) {
+			while (getchar() != '\n');//清空输入缓冲区
+			printf("请输入合法操作码。\n");
+			printf("请输入操作码(1~11): ");
+		}
+		if (choice == 11)
+		{
+			printf("欢迎您再次使用, 再见!\n");
+			break;
+		}
+		if ( L != NULL && choice == 1)
+		{
+			/* 企图重复创建链表 */
+		    /* 拦截该行为 */
+			printf("请不要重复创建链表。\n");
+			continue;
+		}
+		else if (L== NULL && choice != 1)
+		{
+			/* 企图不创建链表就开始访问链表 */
+			/* 拦截该行为 */
+			printf("请先创建链表再对其进行操作.\n");
+			continue;
+		}
+		switch (choice)
+		{
+		case 1:
+			CreateList(&L);
+			TraverseList(L, visit);
+			break;
+		case 2:
+			TraverseList(L, visit);
+			break;
+		case 3:
+			DeleteEle(&L);
+			TraverseList(L, visit);
+			break;
+		case 4:
+			InsertEle(&L);
+			break;
+		case 5:
+			ReverseList(&L);
+			TraverseList(L, visit);
+			break;
+		case 6:
+			ReverseEvenList(&L);
+			TraverseList(L, visit);
+			break;
+		case 7:
+			JudgeLoop(L);
+			break;
+		case 8:
+			printf("请您输入您想要查询的元素：\n");
+			int ele = JudgeInput();
+			LNode* se = SearchEle(L, ele);
+			if (se)
+				printf("该链表存在该元素\n");
+			else
+				printf("该链表中不存在该元素\n");
+			break;
+		case 9:
+			FindMid(L);
+			break;
+		case 10:
+			DestroyList(&L);
+			break;
+		case 11:
+			return 0;
+		}
 	}
 }

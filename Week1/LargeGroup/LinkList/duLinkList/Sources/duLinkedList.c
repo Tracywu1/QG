@@ -1,7 +1,7 @@
-/*linkedList.c--支持单链表操作的函数*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "duLinkedList.h"
+DuLinkedList* L;
 
 /**
  *  @name        : Status InitList_DuL(DuLinkedList *L)
@@ -11,9 +11,9 @@
  *  @notice      : None
  */
 Status InitList_DuL(DuLinkedList* L) {
-	if (!L) return OVERFLOW;
+	if (*L!=NULL) return OVERFLOW;
 	*L = (DuLinkedList)malloc(sizeof(DuLNode));
-	if (*L == NULL)return ERROR;
+	if (!(*L))return ERROR;
 	(*L)->prior = (*L)->next = (*L);
 	return SUCCESS;
 }
@@ -26,12 +26,17 @@ Status InitList_DuL(DuLinkedList* L) {
  *  @notice      : None
  */
 void DestroyList_DuL(DuLinkedList* L) {
-	DuLNode* p = *L;
-	while (p) {
-		p = p->next;
-		free(*L);
-		*L = p;
+	DuLinkedList p = NULL;
+	p = (*L)->next;
+	while (p != (*L))
+	{
+		(*L)->next = p->next;
+		free(p);
+		p = (*L)->next;
 	}
+	free(*L);
+	*L = NULL;
+	printf("恭喜您，您已成功销毁链表！");
 }
 
 /**
@@ -43,10 +48,10 @@ void DestroyList_DuL(DuLinkedList* L) {
  */
 Status InsertBeforeList_DuL(DuLNode* p, DuLNode* q) {
 	if (p == NULL || q == NULL || p->prior == NULL) return ERROR;
-	q->next = p;
-	q->prior = p->prior;
 	p->prior->next = q;
+	q->prior = p->prior;
 	p->prior = q;
+	q->next = p;
 	return SUCCESS;
 }
 
@@ -59,10 +64,10 @@ Status InsertBeforeList_DuL(DuLNode* p, DuLNode* q) {
  */
 Status InsertAfterList_DuL(DuLNode* p, DuLNode* q) {
 	if (p == NULL || q == NULL || p->prior == NULL) return ERROR;
-	q->next = p->next;
-	q->prior = p;
 	p->next->prior = q;
+	q->next = p->next;
 	p->next = q;
+	q->prior = p;
 	return SUCCESS;
 }
 
@@ -74,10 +79,10 @@ Status InsertAfterList_DuL(DuLNode* p, DuLNode* q) {
  *  @notice      : None
  */
 Status DeleteList_DuL(DuLNode* p, ElemType* e) {
-	if (p == NULL || p->next == NULL) return ERROR;
-	e = p->next->data;
+	if (p == NULL || p->next == L) return ERROR;
+	*e = p->next->data;
 	DuLNode* q = p->next;
-	p->next = p->next->next;
+	p->next = q->next;
 	q->next->prior = p;
 	free(q);
 	return SUCCESS;
@@ -92,11 +97,12 @@ Status DeleteList_DuL(DuLNode* p, ElemType* e) {
  */
 void TraverseList_DuL(DuLinkedList L, void (*visit)(ElemType e)) {
 	DuLNode* p = L->next;
-	while (p) {
+	printf("链表中元素的排列为：\n");
+	while (p!=L) {
 		visit(p->data);
 		p = p->next;
 	}
 }
 void visit(ElemType e) {
-	printf("%d", e);
+	printf("%d\t", e);
 }
