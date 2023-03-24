@@ -53,7 +53,6 @@ public class CRUDUtils {
      * @return返回特定的泛型
      */
     public static <T> T query(String sql, Class<T> clazz, Object... params) {
-        T t = null;
         //获取连接
         Connection conn = null;
         //对sql进行预编译
@@ -77,7 +76,7 @@ public class CRUDUtils {
             int count = rsmd.getColumnCount();
             //处理结果集
             while (rs.next()) {
-                t = clazz.newInstance();//要求这个Javabean类型必须有无参构造
+                T t = clazz.newInstance();//要求这个Javabean类型必须有无参构造
                 //循环每一行有几列
                 for (int i = 0; i < count; i++) {
                     //第几列的名称
