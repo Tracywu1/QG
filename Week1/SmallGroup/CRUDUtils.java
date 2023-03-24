@@ -55,14 +55,14 @@ public class CRUDUtils {
     public static <T> T query(String sql, Class<T> clazz, Object... params) {
         T t = null;
         //获取连接
-        Connection con = null;
+        Connection conn = null;
         //对sql进行预编译
         PreparedStatement psmt = null;
         //执行查询
         ResultSet rs = null;
         try {
-            con = JDBCUtils.getConnection();
-            psmt = con.prepareStatement(sql);
+            conn = JDBCUtils.getConnection();
+            psmt = conn.prepareStatement(sql);
             //设置占位符
             if (params != null && params.length > 0) {
                 //数组的下标是从0开始，？的编号是1开始
@@ -97,7 +97,7 @@ public class CRUDUtils {
             e.printStackTrace();
         } finally {
             //释放资源
-            JDBCUtils.release(con, psmt, rs);
+            JDBCUtils.release(conn, psmt, rs);
         }
         return null;
     }
@@ -112,12 +112,12 @@ public class CRUDUtils {
      * @return        返回特定的泛型
      */
     public static <T> List<T> queryMore(String sql, Class<T> clazz, Object... params) {
-        Connection con = null;
+        Connection conn = null;
         PreparedStatement psmt = null;
         ResultSet rs = null;
         try {
-            con = JDBCUtils.getConnection();
-            psmt = con.prepareStatement(sql);
+            conn = JDBCUtils.getConnection();
+            psmt = conn.prepareStatement(sql);
             for (int i = 0; i < params.length; i++) {
                 psmt.setObject(i + 1, params[i]);
             }
