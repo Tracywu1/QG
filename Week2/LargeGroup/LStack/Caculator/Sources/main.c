@@ -17,7 +17,7 @@ int main()
 	while (1) {
 		DisplayMenu();
 		short choice;
-		while ((scanf("%hd", &choice) != 1) || choice < 1 || choice > 10) {
+		while ((scanf("%hd", &choice) != 1) || choice < 1 || choice > 2) {
 			while (getchar() != '\n');//清空输入缓冲区
 			printf("请输入合法操作码。\n");
 			printf("请输入操作码(1~2): ");
