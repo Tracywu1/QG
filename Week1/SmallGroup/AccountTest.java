@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class demo1 {
+public class AccountTest {
    @Test
     public void testQuery(){
         try {
