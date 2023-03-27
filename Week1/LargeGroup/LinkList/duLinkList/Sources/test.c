@@ -96,7 +96,11 @@ void DisplayMenu() {
 DuLinkedList CreateList(DuLinkedList* L) {
 	InitList_DuL(L);
 	printf("请输入您要创建的链表的元素的个数：");
-	int n = JudgeInput();
+	int n;
+	while (scanf("%d", &n) != 1 || n < 0) {
+		while (getchar() != '\n');
+		printf("\n请输入正整数:\n");
+	}
 	DuLNode* s;
 	DuLNode* p;
 	p = (*L);
