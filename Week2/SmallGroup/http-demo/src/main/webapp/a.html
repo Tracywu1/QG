@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>request-response</title>
+</head>
+<body>
+<button onclick="sendPostRequest(200)">POST请求200</button>
+<button onclick="sendPostRequest(302)">POST请求302</button>
+<button onclick="sendPostRequest(304)">POST请求304</button>
+<button onclick="sendPostRequest(404)">POST请求404</button>
+<button onclick="sendPostRequest(500)">POST请求500</button>
+<br>
+<br>
+<button onclick="sendGetRequest(200)">GET请求200</button>
+<button onclick="sendGetRequest(302)">GET请求302</button>
+<button onclick="sendGetRequest(304)">GET请求304</button>
+<button onclick="sendGetRequest(404)">GET请求404</button>
+<button onclick="sendGetRequest(500)">GET请求500</button>
+<br>
+<br>
+<button onclick="sendHeadRequest(200)">HEAD请求200</button>
+<button onclick="sendHeadRequest(302)">HEAD请求302</button>
+<button onclick="sendHeadRequest(304)">HEAD请求304</button>
+<button onclick="sendHeadRequest(404)">HEAD请求404</button>
+<button onclick="sendHeadRequest(500)">HEAD请求500</button>
+<br>
+<br>
+<button onclick="sendPutRequest(200)">PUT请求200</button>
+<button onclick="sendPutRequest(302)">PUT请求302</button>
+<button onclick="sendPutRequest(304)">PUT请求304</button>
+<button onclick="sendPutRequest(404)">PUT请求404</button>
+<button onclick="sendPutRequest(500)">PUT请求500</button>
+<br>
+<br>
+<button onclick="sendDeleteRequest(200)">DELETE请求200</button>
+<button onclick="sendDeleteRequest(302)">DELETE请求302</button>
+<button onclick="sendDeleteRequest(304)">DELETE请求304</button>
+<button onclick="sendDeleteRequest(404)">DELETE请求404</button>
+<button onclick="sendDeleteRequest(500)">DELETE请求500</button>
+<br>
+<br>
+<button onclick="sendOptionsRequest( 200)">OPTIONS请求200</button>
+<button onclick="sendOptionsRequest( 302)">OPTIONS请求302</button>
+<button onclick="sendOptionsRequest( 304)">OPTIONS请求304</button>
+<button onclick="sendOptionsRequest( 404)">OPTIONS请求404</button>
+<button onclick="sendOptionsRequest( 500)">OPTIONS请求500</button>
+
+<script>
+    function sendPostRequest(statusCode) {
+        const form = document.createElement('form');  // 创建一个 form 元素
+        form.method = 'POST';  // 指定请求方法为 POST
+        form.action = 'http://localhost:8080/http_demo_war/MyServlet';  // 指定请求的 URL
+        document.body.appendChild(form);  // 将 form 元素添加到页面中
+
+        const input = document.createElement('input');  // 创建一个 input 元素
+        input.type = 'hidden';  // 隐藏 input 元素
+        input.name = 'statusCode';  // 指定 input 元素的名称为 statusCode
+        input.value = statusCode;  // 指定 input 元素的值为传入的状态码
+        form.appendChild(input);  // 将 input 元素添加到 form 元素中
+
+        form.submit();  // 提交表单，发送 POST 请求
+    }
+
+    function sendGetRequest(statusCode) {
+        const form = document.createElement('form');  // 创建一个 form 元素
+        form.method = 'GET';  // 指定请求方法为 POST
+        form.action = 'http://localhost:8080/http_demo_war/MyServlet';  // 指定请求的 URL
+        document.body.appendChild(form);  // 将 form 元素添加到页面中
+
+        const input = document.createElement('input');  // 创建一个 input 元素
+        input.type = 'hidden';  // 隐藏 input 元素
+        input.name = 'statusCode';  // 指定 input 元素的名称为 statusCode
+        input.value = statusCode;  // 指定 input 元素的值为传入的状态码
+        form.appendChild(input);  // 将 input 元素添加到 form 元素中
+
+        form.submit();  // 提交表单，发送 POST 请求
+    }
+
+    function sendHeadRequest(statusCode) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('HEAD', 'http://localhost:8080/http_demo_war/MyServlet');
+        xhr.setRequestHeader("Content-Type", "text/html");
+        xhr.setRequestHeader('statusCode', statusCode);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                alert(xhr.status + " " + xhr.statusText);
+            }
+        }
+        xhr.send();
+    }
+
+
+    function sendPutRequest(statusCode) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('PUT', "http://localhost:8080/http_demo_war/MyServlet");
+        xhr.setRequestHeader("Content-Type", "text/plain");
+        xhr.setRequestHeader("statusCode", statusCode);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                alert(xhr.status + " " + xhr.statusText);
+            }
+        }
+        xhr.send("Hello World!");
+    }
+
+    function sendDeleteRequest(statusCode) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "http://localhost:8080/http_demo_war/MyServlet");
+        xhr.setRequestHeader("Content-Type", "text/html");
+        xhr.setRequestHeader("statusCode", statusCode);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                alert(xhr.status + " " + xhr.statusText);
+            }
+        };
+        xhr.send();
+    }
+
+    function sendOptionsRequest(statusCode) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('OPTIONS', 'http://localhost:8080/http_demo_war/MyServlet');
+        xhr.setRequestHeader('statusCode', statusCode);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                alert(xhr.status + ': ' + xhr.statusText);
+            }
+        };
+        xhr.send();
+    }
+</script>
+</body>
+</html>
