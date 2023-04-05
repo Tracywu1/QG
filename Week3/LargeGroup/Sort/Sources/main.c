@@ -17,7 +17,6 @@ void bubbleSortMenu();
 void BubbleSort(int* arr, int n);
 void BubbleSort_sign(int* arr, int n);
 void BubbleSort_last(int* arr, int n);
-void BubbleSort_unordered(int* arr, int n);
 void BidirectionalBubbleSort(int* arr, int n);
 void generateTestData();
 void readFileData(int* arr1, int* arr2, int* arr3, int* arr4);
@@ -38,6 +37,7 @@ void quickSort_Recursion_Partition(int* arr1, int* arr2, int* arr3, int* arr4, v
 void bubbleSort_main(int* arr1, int* arr2, int* arr3, int* arr4);
 void bubbleSort(int* arr1, int* arr2, int* arr3, int* arr4, void (*sortMethod2)(int* arr, int n));
 void colorSort();
+int* creatArray_signed(int* arr, int n);
 
 int main() {
 	generateTestData();
@@ -90,7 +90,7 @@ int main() {
 			int* arr = (int*)malloc(n * sizeof(int));
 			arr = creatArray(arr, n);
 			printf("开始寻找~~\n");
-			int kthNumber = FindKthNumber(arr, n, k);
+			int kthNumber = FindKthNumber(arr, 0, n-1, k);
 			printf("第%d小的数为：%d\n", k, kthNumber);
 			free(arr);
 			break;
@@ -116,7 +116,7 @@ void bubbleSort_main(int* arr11, int* arr22, int* arr33, int* arr44) {
 		memcpy(arr3, arr33, 200000 * sizeof(int));
 		memcpy(arr4, arr44, 100 * sizeof(int));
 		bubbleSortMenu_main();
-		short choice = JudgeChoice(6);
+		short choice = JudgeChoice(5);
 		switch (choice) {
 		case 1:
 			bubbleSort(arr1, arr2, arr3, arr4, BubbleSort);
@@ -128,12 +128,9 @@ void bubbleSort_main(int* arr11, int* arr22, int* arr33, int* arr44) {
 			bubbleSort(arr1, arr2, arr3, arr4, BubbleSort_last);
 			break;
 		case 4:
-			bubbleSort(arr1, arr2, arr3, arr4, BubbleSort_unordered);
-			break;
-		case 5:
 			bubbleSort(arr1, arr2, arr3, arr4, BidirectionalBubbleSort);
 			break;
-		case 6:
+		case 5:
 			return;
 		}
 		free(arr1);
@@ -143,8 +140,14 @@ void bubbleSort_main(int* arr11, int* arr22, int* arr33, int* arr44) {
 	}
 }
 
-void bubbleSort(int* arr1, int* arr2, int* arr3, int* arr4, void (*sortMethod2)(int* arr, int n)) {
+void bubbleSort(int* arr111, int* arr222, int* arr333, int* arr444, void (*sortMethod2)(int* arr, int n)) {
 	while (1) {
+		int* arr1 = (int*)malloc(10000 * sizeof(int));
+		int* arr2 = (int*)malloc(50000 * sizeof(int));
+		int* arr3 = (int*)malloc(200000 * sizeof(int));
+		memcpy(arr1, arr111, 10000 * sizeof(int));
+		memcpy(arr2, arr222, 50000 * sizeof(int));
+		memcpy(arr3, arr333, 200000 * sizeof(int));
 		bubbleSortMenu();
 		short choice = JudgeChoice(4);
 		switch (choice) {
@@ -162,7 +165,6 @@ void bubbleSort(int* arr1, int* arr2, int* arr3, int* arr4, void (*sortMethod2)(
 				cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
 
 				printf("Bubble sort with %d elements took %.15f seconds\n", sizes[i], cpu_time_used);
-				free(arrs[i]);
 			}
 			break;
 		}
@@ -176,13 +178,15 @@ void bubbleSort(int* arr1, int* arr2, int* arr3, int* arr4, void (*sortMethod2)(
 			// 进行多次排序并取平均值
 			start = clock();
 			for (k = 0; k < iterations; k++) {
+				int* arr4 = (int*)malloc(100 * sizeof(int));
+				memcpy(arr4, arr444, 100 * sizeof(int));
 				sortMethod2(arr4, 100);
+				free(arr4);
 			}
 			end = clock();
 			cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
 
 			printf("Bubble sort with 100 elements 100000 times took %.15f seconds \n", cpu_time_used);
-			free(arr4);
 
 			break;
 		}
@@ -202,6 +206,9 @@ void bubbleSort(int* arr1, int* arr2, int* arr3, int* arr4, void (*sortMethod2)(
 		case 4:
 			return;
 		}
+		free(arr1);
+		free(arr2);
+		free(arr3);
 	}
 }
 
@@ -237,8 +244,14 @@ void quickSort_main(int* arr11, int* arr22, int* arr33, int* arr44) {
 	}
 }
 
-void quickSort_Recursion_Partition(int* arr1, int* arr2, int* arr3, int* arr4, void (*sortMethod1)(int* a, int begin, int end)) {
+void quickSort_Recursion_Partition(int* arr111, int* arr222, int* arr333, int* arr444, void (*sortMethod1)(int* a, int begin, int end)) {
 	while (1) {
+		int* arr1 = (int*)malloc(10000 * sizeof(int));
+		int* arr2 = (int*)malloc(50000 * sizeof(int));
+		int* arr3 = (int*)malloc(200000 * sizeof(int));
+		memcpy(arr1, arr111, 10000 * sizeof(int));
+		memcpy(arr2, arr222, 50000 * sizeof(int));
+		memcpy(arr3, arr333, 200000 * sizeof(int));
 		quickSortMenu();
 		short choice = JudgeChoice(4);
 		switch (choice) {
@@ -251,7 +264,7 @@ void quickSort_Recursion_Partition(int* arr1, int* arr2, int* arr3, int* arr4, v
 
 			for (int i = 0; i < 3; i++) {
 				start = clock();
-				sortMethod1(arrs[i], 0, sizes[i]);
+				sortMethod1(arrs[i], 0, sizes[i]-1);
 				end = clock();
 				cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
 
@@ -269,7 +282,10 @@ void quickSort_Recursion_Partition(int* arr1, int* arr2, int* arr3, int* arr4, v
 			// 进行多次排序并取平均值
 			start = clock();
 			for (k = 0; k < iterations; k++) {
+				int* arr4 = (int*)malloc(100 * sizeof(int));
+				memcpy(arr4, arr444, 100 * sizeof(int));
 				sortMethod1(arr4, 0, 99);
+				free(arr4);
 			}
 			end = clock();
 			cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
@@ -294,11 +310,20 @@ void quickSort_Recursion_Partition(int* arr1, int* arr2, int* arr3, int* arr4, v
 		case 4:
 			return;
 		}
+		free(arr1);
+		free(arr2);
+		free(arr3);
 	}
 }
 
-void quickSort(int* arr1, int* arr2, int* arr3, int* arr4) {
+void quickSort(int* arr111, int* arr222, int* arr333, int* arr444) {
 	while (1) {
+		int* arr1 = (int*)malloc(10000 * sizeof(int));
+		int* arr2 = (int*)malloc(50000 * sizeof(int));
+		int* arr3 = (int*)malloc(200000 * sizeof(int));
+		memcpy(arr1, arr111, 10000 * sizeof(int));
+		memcpy(arr2, arr222, 50000 * sizeof(int));
+		memcpy(arr3, arr333, 200000 * sizeof(int));
 		quickSortMenu();
 		short choice = JudgeChoice(4);
 		switch (choice) {
@@ -329,7 +354,10 @@ void quickSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 			// 进行多次排序并取平均值
 			start = clock();
 			for (k = 0; k < iterations; k++) {
+				int* arr4 = (int*)malloc(100 * sizeof(int));
+				memcpy(arr4, arr444, 100 * sizeof(int));
 				QuickSort(arr4, 100);
+				free(arr4);
 			}
 			end = clock();
 			cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
@@ -343,7 +371,7 @@ void quickSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 			printf("请输入你想要测试的数据的量：");
 			int n = JudgeInput();
 			int* arr = (int*)malloc(n * sizeof(int));
-			arr = creatArray(arr, n);
+			arr = creatArray_signed(arr, n);
 			printf("开始排序~~\n");
 			QuickSort(arr, n);
 			printf("排序后的结果为：");
@@ -354,6 +382,9 @@ void quickSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 		case 4:
 			return;
 		}
+		free(arr1);
+		free(arr2);
+		free(arr3);
 	}
 }
 
@@ -373,8 +404,14 @@ void colorSort() {
 
 }
 
-void radixCountSort(int* arr1, int* arr2, int* arr3, int* arr4) {
+void radixCountSort(int* arr11, int* arr22, int* arr33, int* arr44) {
 	while (1) {
+		int* arr1 = (int*)malloc(10000 * sizeof(int));
+		int* arr2 = (int*)malloc(50000 * sizeof(int));
+		int* arr3 = (int*)malloc(200000 * sizeof(int));
+		memcpy(arr1, arr11, 10000 * sizeof(int));
+		memcpy(arr2, arr22, 50000 * sizeof(int));
+		memcpy(arr3, arr33, 200000 * sizeof(int));
 		radixCountSortMenu();
 		short choice = JudgeChoice(4);
 		switch (choice) {
@@ -402,10 +439,13 @@ void radixCountSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 			double cpu_time_used;
 			int iterations = 100000;
 
-			// 进行多次排序并取平均值
+			// 进行多次排序并取
 			start = clock();
 			for (k = 0; k < iterations; k++) {
+				int* arr4 = (int*)malloc(100 * sizeof(int));
+				memcpy(arr4, arr44, 100 * sizeof(int));
 				RadixCountSort(arr4, 100);
+				free(arr4);
 			}
 			end = clock();
 			cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
@@ -419,7 +459,7 @@ void radixCountSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 			printf("请输入你想要测试的数据的量：");
 			int n = JudgeInput();
 			int* arr = (int*)malloc(n * sizeof(int));
-			arr = creatArray(arr, n);
+			arr = creatArray_signed(arr, n);
 			printf("开始排序~~\n");
 			RadixCountSort(arr, n);
 			printf("排序后的结果为：");
@@ -430,11 +470,22 @@ void radixCountSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 		case 4:
 			return;
 		}
+		free(arr1);
+		free(arr2);
+		free(arr3);
 	}
 }
 
-void countSort(int* arr1, int* arr2, int* arr3, int* arr4) {
+void countSort(int* arr11, int* arr22, int* arr33, int* arr44) {
 	while (1) {
+		int* arr1 = (int*)malloc(10000 * sizeof(int));
+		int* arr2 = (int*)malloc(50000 * sizeof(int));
+		int* arr3 = (int*)malloc(200000 * sizeof(int));
+		int* arr4 = (int*)malloc(100 * sizeof(int));
+		memcpy(arr1, arr11, 10000 * sizeof(int));
+		memcpy(arr2, arr22, 50000 * sizeof(int));
+		memcpy(arr3, arr33, 200000 * sizeof(int));
+		memcpy(arr4, arr44, 100 * sizeof(int));
 		countSortMenu();
 		short choice = JudgeChoice(4);
 		switch (choice) {
@@ -451,7 +502,6 @@ void countSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 				CountSort(arrs[i], sizes[i], max);
 				end = clock();
 				cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-
 				printf("Count sort with %d elements took %.15f seconds\n", sizes[i], cpu_time_used);
 			}
 			break;
@@ -462,12 +512,15 @@ void countSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 			clock_t start, end;
 			double cpu_time_used;
 			int iterations = 100000;
-			int max = findMax(arr4, 100);
 
-			// 进行多次排序并取平均值
+			// 进行多次排序
 			start = clock();
 			for (k = 0; k < iterations; k++) {
+				int* arr4 = (int*)malloc(100 * sizeof(int));
+				memcpy(arr4, arr44, 100 * sizeof(int));
+				int max = findMax(arr4, 100);
 				CountSort(arr4, 100, max);
+				free(arr4);
 			}
 			end = clock();
 			cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
@@ -480,7 +533,7 @@ void countSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 			printf("请输入你想要测试的数据的量：");
 			int n = JudgeInput();
 			int* arr = (int*)malloc(n * sizeof(int));
-			arr = creatArray(arr, n);
+			arr = creatArray_signed(arr, n);
 			int max = findMax(arr, n);
 			printf("开始排序~~\n");
 			CountSort(arr, n, max);
@@ -492,11 +545,20 @@ void countSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 		case 4:
 			return;
 		}
+		free(arr1);
+		free(arr2);
+		free(arr3);
 	}
 }
 
-void mergeSort(int* arr1, int* arr2, int* arr3, int* arr4) {
+void mergeSort(int* arr11, int* arr22, int* arr33, int* arr44) {
 	while (1) {
+		int* arr1 = (int*)malloc(10000 * sizeof(int));
+		int* arr2 = (int*)malloc(50000 * sizeof(int));
+		int* arr3 = (int*)malloc(200000 * sizeof(int));
+		memcpy(arr1, arr11, 10000 * sizeof(int));
+		memcpy(arr2, arr22, 50000 * sizeof(int));
+		memcpy(arr3, arr33, 200000 * sizeof(int));
 		mergeSortMenu();
 		short choice = JudgeChoice(4);
 		switch (choice) {
@@ -524,12 +586,15 @@ void mergeSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 			double cpu_time_used;
 			int iterations = 100000;
 
-			// 进行多次排序并取平均值
+			// 进行多次排序
 			start = clock();
 			for (int k = 0; k < iterations; k++) {
+				int* arr4 = (int*)malloc(100 * sizeof(int));
+				memcpy(arr4, arr44, 100 * sizeof(int));
 				int* temp = (int*)malloc(100 * sizeof(int));
 				MergeSort(arr4, 0, 99, temp);
 				free(temp);
+				free(arr4);
 			}
 			end = clock();
 			cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC / iterations;
@@ -555,11 +620,20 @@ void mergeSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 		case 4:
 			return;
 		}
+		free(arr1);
+		free(arr2);
+		free(arr3);
 	}
 }
 
-void insertSort(int* arr1, int* arr2, int* arr3, int* arr4) {
+void insertSort(int* arr11, int* arr22, int* arr33, int* arr44) {
 	while (1) {
+		int* arr1 = (int*)malloc(10000 * sizeof(int));
+		int* arr2 = (int*)malloc(50000 * sizeof(int));
+		int* arr3 = (int*)malloc(200000 * sizeof(int));
+		memcpy(arr1, arr11, 10000 * sizeof(int));
+		memcpy(arr2, arr22, 50000 * sizeof(int));
+		memcpy(arr3, arr33, 200000 * sizeof(int));
 		insertSortMenu();
 		short choice = JudgeChoice(4);
 		switch (choice) {
@@ -587,10 +661,13 @@ void insertSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 			double cpu_time_used;
 			int iterations = 100000;
 
-			// 进行多次排序并取平均值
+			// 进行多次排序
 			start = clock();
 			for (k = 0; k < iterations; k++) {
+				int* arr4 = (int*)malloc(100 * sizeof(int));
+				memcpy(arr4, arr44, 100 * sizeof(int));
 				InsertSort(arr4, 100);
+				free(arr4);
 			}
 			end = clock();
 			cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC / iterations;
@@ -614,6 +691,9 @@ void insertSort(int* arr1, int* arr2, int* arr3, int* arr4) {
 		case 4:
 			return;
 		}
+		free(arr1);
+		free(arr2);
+		free(arr3);
 	}
 }
 
@@ -714,13 +794,11 @@ void bubbleSortMenu_main() {
 	printf("*******************************************************************\n");
 	printf("   3.冒泡排序优化版2（记录最后一次交换的位置）\n");
 	printf("*******************************************************************\n");
-	printf("   4.冒泡排序优化版3（设置无序区间的边界）\n");
+	printf("   4.双向冒泡排序\n");
 	printf("*******************************************************************\n");
-	printf("   5.双向冒泡排序\n");
-	printf("*******************************************************************\n");
-	printf("   6.exit\n");
+	printf("   5.exit\n");
 	printf(" -------------------------------------------------------------\n");
-	printf("请选择您需要的操作(1~6)：\n");
+	printf("请选择您需要的操作(1~5)：\n");
 }
 
 void bubbleSortMenu() {
@@ -899,29 +977,6 @@ void BubbleSort_last(int* arr, int n) {
 }
 
 /*
-  对于部分有序的数组，可以通过设置一个
-  无序区间的边界来减少比较次数，提高效率。
-  但是如果数组完全无序，这种优化方式可能
-  会导致更多的比较操作，效率反而会降低。
-*/
-void BubbleSort_unordered(int* arr, int n) {
-	int i, j, tmp;
-	int border = n - 1;  // 无序区间的边界
-	int last = 0; // 最后一次交换的位置
-	while (last > 0) {
-		for (j = 0; j < border; j++) {
-			if (arr[j] > arr[j + 1]) {
-				tmp = arr[j];
-				arr[j] = arr[j + 1];
-				arr[j + 1] = tmp;
-				last = j;
-			}
-		}
-		border = last;
-	}
-}
-
-/*
   双向冒泡排序，它可以同时从两个方向
   对数组进行排序，从而减少排序的次数
 */
@@ -1011,6 +1066,14 @@ int* creatArray(int* arr, int n) {
 	for (int j = 0; j < n; j++) {
 		printf("\ninput -> data: ");
 		arr[j] = JudgeInput_unsigned();
+	}
+	return arr;
+}
+
+int* creatArray_signed(int* arr, int n) {
+	for (int j = 0; j < n; j++) {
+		printf("\ninput -> data: ");
+		arr[j] = JudgeInput();
 	}
 	return arr;
 }

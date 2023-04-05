@@ -157,27 +157,44 @@ void QuickSort(int* a, int size) {
  *  @description : 快速排序（枢轴存放）
  *  @param       : 数组指针a，数组起点begin，数组终点end
  */
+int medianOfThree(int* a, int begin, int end) {
+	int mid = begin + (end - begin) / 2;
+	if (a[begin] > a[end])
+		swap(&a[begin], &a[end]);
+	if (a[mid] > a[end])
+		swap(&a[mid], &a[end]);
+	if (a[begin] > a[mid])
+		swap(&a[begin], &a[mid]);
+	return a[mid];
+}
+
 int Partition(int* a, int begin, int end) {
-	// 将枢轴放在数组的最右侧
-	int pivot = a[end];
+	int pivot = medianOfThree(a, begin, end);
 	int i = begin - 1;
-	for (int j = begin; j < end; j++) {
-		if (a[j] < pivot) {
+	int j = end + 1;
+	while (1) {
+		do {
 			i++;
-			swap(&a[i], &a[j]);
-		}
+		} while (a[i] < pivot);
+		do {
+			j--;
+		} while (a[j] > pivot);
+		if (i >= j)
+			return j;
+		swap(&a[i], &a[j]);
 	}
-	swap(&a[i + 1], &a[end]);
-	return i + 1;
 }
 
 void QuickSort_Partition(int* a, int begin, int end) {
-	if (begin < end) {
-		int pivotIndex = Partition(a, begin, end);
-		QuickSort_Partition(a, begin, pivotIndex - 1);
-		QuickSort_Partition(a, pivotIndex + 1, end);
+	if (end - begin + 1 <= 10) {
+		InsertSort(a, end - begin + 1);
+		return;
 	}
+	int pivot = Partition(a, begin, end);
+	QuickSort_Partition(a, begin, pivot);
+	QuickSort_Partition(a, pivot + 1, end);
 }
+
 
 
 /**
@@ -284,16 +301,25 @@ void ColorSort(int* a, int size)
 
 
 /**
- *  @name        : int find_kth_number(int* a, int size, int k)
+ *  @name        : int quick_select(int arr[], int left, int right, int k)
  *  @description : 在一个无序序列中找到第K小的数
- *  @param       : 数组指针a，数组长度size
+ *  @param       : 数组指针a，数组起点begin，数组终点end, k值
  */
-int FindKthNumber(int* a, int size, int k) {
-	// 首先使用快速排序算法对数组进行排序
-	QuickSort(a, size);
+int FindKthNumber(int* a, int begin, int end, int k) {
+	if (begin == end) {
+		return a[begin];  // 只有一个元素，直接返回
+	}
 
-	// 返回第 k 小的数
-	if (k <= size) {
-		return a[k-1];
+	int pivot_index = Partition(a, begin, end);
+	int pivot_rank = pivot_index - begin + 1;  // 主元在子数组中的排名（从 1 开始）
+
+	if (k == pivot_rank) {
+		return a[pivot_index];
+	}
+	else if (k < pivot_rank) {
+		return FindKthNumber(a, begin, pivot_index - 1, k);
+	}
+	else {
+		return FindKthNumber(a, pivot_index + 1, end, k - pivot_rank);
 	}
 }

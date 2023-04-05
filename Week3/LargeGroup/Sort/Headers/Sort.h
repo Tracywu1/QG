@@ -78,8 +78,8 @@ void ColorSort(int* a, int size);
  *  @description : 在一个无序序列中找到第K大/小的数
  *  @param       : 数组指针a，数组长度size
  */
-int FindKthNumber(int* a, int size, int k);
+int FindKthNumber(int* a, int begin, int end, int k);
 
-void QuickSort_Partition(int* nums, int left, int right);
+void QuickSort_Partition(int* a, int begin, int end);
 
 #endif // QUEUE_H_INCLUDED
