@@ -16,7 +16,6 @@ public class MyServlet extends HttpServlet {
             throws ServletException, IOException {
         int statusCode = Integer.parseInt(request.getParameter("statusCode"));
 
-        //response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 
         switch (statusCode) {
@@ -60,26 +59,7 @@ public class MyServlet extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         this.doHead(request, response);
-        /*int statusCode = Integer.parseInt(request.getHeader("X-StatusCode"));
-        String statusMessage = getStatusMessage(statusCode);
-
-        response.setStatus(statusCode, statusMessage);*/
     }
-
-    /*private String getStatusMessage(int statusCode) {
-        switch (statusCode) {
-            case HttpServletResponse.SC_FOUND:
-                return "Found";
-            case HttpServletResponse.SC_NOT_MODIFIED:
-                return "Not Modified";
-            case HttpServletResponse.SC_NOT_FOUND:
-                return "Not Found";
-            case HttpServletResponse.SC_INTERNAL_SERVER_ERROR:
-                return "Internal Server Error";
-            default:
-                return "OK";
-        }
-    }*/
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
