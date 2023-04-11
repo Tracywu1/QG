@@ -10,7 +10,6 @@ int is_right(RBNodePtr);
 void delete_fixup(RedBlackTreePtr, RBNodePtr);
 
 
-
 typedef struct QueueNode {
 	RBNodePtr node;
 	struct QueueNode* next;
@@ -105,13 +104,13 @@ void destroyStack(StackPtr stack) {
 }
 
 //初始化红黑树
-Status init(RedBlackTreePtr tree) {
-	tree->nil = (RBNodePtr)malloc(sizeof(RBNode));
-	tree->nil->color = BLACK;
-	tree->nil->left = NULL;
-	tree->nil->right = NULL;
-	tree->nil->parent = NULL;
-	tree->root = tree->nil;
+Status init(RedBlackTreePtr rbt) {
+	rbt->nil = (RBNodePtr)malloc(sizeof(RBNode));
+	rbt->nil->color = BLACK;
+	rbt->nil->left = NULL;
+	rbt->nil->right = NULL;
+	rbt->nil->parent = NULL;
+	rbt->root = rbt->nil;
 	return succeed;
 }
 
@@ -131,15 +130,15 @@ RBNodePtr create_node(ElemType value, RBNodePtr nil) {
 }
 
 //左旋
-void left_rotate(RedBlackTreePtr tree, RBNodePtr node) {
+void left_rotate(RedBlackTreePtr rbt, RBNodePtr node) {
 	RBNodePtr right = node->right;
 	node->right = right->left;
-	if (right->left != tree->nil) {
+	if (right->left != rbt->nil) {
 		right->left->parent = node;
 	}
 	right->parent = node->parent;
-	if (node->parent == tree->nil) {
-		tree->root = right;
+	if (node->parent == rbt->nil) {
+		rbt->root = right;
 	}
 	else if (node == node->parent->left) {
 		node->parent->left = right;
@@ -152,15 +151,15 @@ void left_rotate(RedBlackTreePtr tree, RBNodePtr node) {
 }
 
 //右旋
-void right_rotate(RedBlackTreePtr tree, RBNodePtr node) {
+void right_rotate(RedBlackTreePtr rbt, RBNodePtr node) {
 	RBNodePtr left = node->left;
 	node->left = left->right;
-	if (left->right != tree->nil) {
+	if (left->right != rbt->nil) {
 		left->right->parent = node;
 	}
 	left->parent = node->parent;
-	if (node->parent == tree->nil) {
-		tree->root = left;
+	if (node->parent == rbt->nil) {
+		rbt->root = left;
 	}
 	else if (node == node->parent->left) {
 		node->parent->left = left;
@@ -173,11 +172,11 @@ void right_rotate(RedBlackTreePtr tree, RBNodePtr node) {
 }
 
 // 插入节点
-Status insert(RedBlackTreePtr tree, ElemType value) {
+Status insert(RedBlackTreePtr rbt, ElemType value) {
 	// BST插入节点
 	RBNodePtr y = NULL;
-	RBNodePtr x = tree->root;
-	while (x != tree->nil) { // 遍历找到合适的插入位置
+	RBNodePtr x = rbt->root;
+	while (x != rbt->nil) { // 遍历找到合适的插入位置
 		y = x;
 		if (value < x->value) {
 			x = x->left;
@@ -189,12 +188,12 @@ Status insert(RedBlackTreePtr tree, ElemType value) {
 			return succeed; // 如果插入的值已经存在，则忽略插入操作
 		}
 	}
-	RBNodePtr node = create_node(value, tree->nil); // 创建新节点
+	RBNodePtr node = create_node(value, rbt->nil); // 创建新节点
 
 	node->parent = y;
 	if (y == NULL) { // 树为空，插入的是根节点
-		tree->root = node;
-		node->parent = tree->nil; // 设置根节点的父节点指针
+		rbt->root = node;
+		node->parent = rbt->nil; // 设置根节点的父节点指针
 	}
 	else if (value < y->value) {
 		y->left = node;
@@ -204,15 +203,15 @@ Status insert(RedBlackTreePtr tree, ElemType value) {
 	}
 
 	// 修正红黑树性质
-	insert_fixup(tree, node);
+	insert_fixup(rbt, node);
 	return succeed;
 }
 //插入修正
-void insert_fixup(RedBlackTreePtr tree, RBNodePtr node) {
-	while (node != tree->root && node->parent->color == RED) {
+void insert_fixup(RedBlackTreePtr rbt, RBNodePtr node) {
+	while (node != rbt->root && node->parent->color == RED) {
 		if (is_left(node->parent)) {
 			RBNodePtr uncle = node->parent->parent->right;
-			if (uncle != tree->nil && uncle->color == RED) {
+			if (uncle != rbt->nil && uncle->color == RED) {
 				// Case 1: 叔叔节点是红色
 				node->parent->color = BLACK;
 				uncle->color = BLACK;
@@ -223,12 +222,12 @@ void insert_fixup(RedBlackTreePtr tree, RBNodePtr node) {
 				if (is_right(node)) {
 					// Case 2: 叔叔节点是黑色，且当前节点是右子节点
 					node = node->parent;
-					left_rotate(tree, node);
+					left_rotate(rbt, node);
 				}
 				// Case 3: 叔叔节点是黑色，且当前节点是左子节点
 				node->parent->color = BLACK;
 				node->parent->parent->color = RED;
-				right_rotate(tree, node->parent->parent);
+				right_rotate(rbt, node->parent->parent);
 				// 修正颜色
 				node->parent->parent->color = RED;
 				node->parent->color = BLACK;
@@ -236,7 +235,7 @@ void insert_fixup(RedBlackTreePtr tree, RBNodePtr node) {
 		}
 		else {
 			RBNodePtr uncle = node->parent->parent->left;
-			if (uncle != tree->nil && uncle->color == RED) {
+			if (uncle != rbt->nil && uncle->color == RED) {
 				// Case 1: 叔叔节点是红色
 				node->parent->color = BLACK;
 				uncle->color = BLACK;
@@ -247,19 +246,19 @@ void insert_fixup(RedBlackTreePtr tree, RBNodePtr node) {
 				if (is_left(node)) {
 					// Case 2: 叔叔节点是黑色，且当前节点是左子节点
 					node = node->parent;
-					right_rotate(tree, node);
+					right_rotate(rbt, node);
 				}
 				// Case 3: 叔叔节点是黑色，且当前节点是右子节点
 				node->parent->color = BLACK;
 				node->parent->parent->color = RED;
-				left_rotate(tree, node->parent->parent);
+				left_rotate(rbt, node->parent->parent);
 				// 修正颜色
 				node->parent->parent->color = RED;
 				node->parent->color = BLACK;
 			}
 		}
 	}
-	tree->root->color = BLACK;
+	rbt->root->color = BLACK;
 }
 
 //获取节点的叔父节点
