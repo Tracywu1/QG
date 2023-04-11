@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>select</title>
+</head>
+<body>
+<div id="app">
+    <a href="addItem.html"><input type="button" value="新增"></a><br>
+    <hr>
+    <table id="itemTable" border="1" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>物品名称</th>
+            <th>物品价格</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr align="center" v-for="(item,i) in items">
+            <td>{{i+1}}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.price }}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data(){
+            return {
+                items: []
+            }
+        },
+        mounted: function() {
+            // 发送 AJAX 请求
+            var self = this;
+            axios.get('http://localhost:8080/Interaction_war/selectAllServlet')
+                .then(function(response) {
+                    self.items = response.data;
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+        }
+    });
+</script>
+</body>
+</html>

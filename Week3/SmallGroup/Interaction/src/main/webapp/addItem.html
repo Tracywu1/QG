@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>add</title>
+</head>
+<body>
+<div id="app">
+<h3>添加物品</h3>
+<form action="" method="post">
+    物品名称：<input id ="name" v-model="item.name" name="name"><br>
+    物品价格：<input id ="price" v-model="item.price" name="price"><br>
+    <input type="button" id="btn" @click="submitForm" value="提交">
+</form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                item: {}
+            }
+        },
+        methods: {
+            submitForm() {
+                var self = this;
+                axios(
+                    {
+                        method: 'post',
+                        url: 'http://localhost:8080/Interaction_war/addServlet',
+                        data: self.item
+                    }
+                ).then(function (response) {
+                    if (response.data == "sussess") {
+                    }
+                    location.href = 'http://localhost:8080/Interaction_war/a.html'
+                })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+        },
+    })
+</script>
+</body>
+</html>
