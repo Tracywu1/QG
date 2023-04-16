@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <h1>用户注册</h1>
+    <form @submit.prevent="submitForm">
+        <div>
+            <label for="username">用户名:</label>
+            <input type="text" id="username" v-model="user.username" required>
+        </div>
+        <div>
+            <label for="password">密码:</label>
+            <input type="password" id="password" v-model="user.password" required>
+        </div>
+        <div>
+            <label for="confirmPassword">确认密码:</label>
+            <input type="password" id="confirmPassword" v-model="confirmPassword" required>
+        </div>
+        <div>
+            <label for="checkCode">验证码:</label>
+            <input type="text" id="checkCode" v-model="checkCode" required>
+        </div>
+        <div>
+            <img id="checkCodeImage" :src="checkCodeImageUrl">
+            <a href="#" id="changeImg" @click.prevent="changeImage()">看不清？</a>
+        </div>
+        <div>
+            <button type="submit">注册</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            user: {
+                username: '',
+                password: '',
+            },
+            confirmPassword: '',
+            checkCode: '',
+            checkCodeImageUrl: 'check-code?method=checkCode',
+        },
+        methods: {
+            changeImage() {
+                this.checkCodeImageUrl = 'check-code?method=checkCode&' + new Date().getTime();
+            },
+            submitForm() {
+                if (this.user.password !== this.confirmPassword) {
+                    alert("两次输入的密码不一致");
+                    return;
+                }
+
+                axios.post('register?method=register&checkCode=' + this.checkCode, {
+                        username: this.user.username,
+                        password: this.user.password,
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(function(response){
+                        if (response.data.code === 200) {
+                            alert("注册成功");
+                        } else {
+                            alert(response.data.message);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        alert(error.response.data.message);
+                    });
+            }
+        }
+    });
+</script>
+</body>
+</html>

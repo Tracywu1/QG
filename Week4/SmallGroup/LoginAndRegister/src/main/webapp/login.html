@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <h1>用户登录</h1>
+    <form @submit.prevent="login">
+        <div>
+            <label for="username">用户名:</label>
+            <input type="text" id="username" v-model="user.username" required>
+        </div>
+
+        <div>
+            <label for="password">密码:</label>
+            <input type="password" id="password" v-model="user.password" required>
+        </div>
+
+        <div>
+            <button type="submit">登录</button>
+        </div>
+
+        <div>
+            还没有账号？<a href="register.html">点击注册</a>
+        </div>
+    </form>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            user: {
+                username: '',
+                password: '',
+            },
+        },
+        methods: {
+            login() {
+                axios.post('login?method=login', {
+                    username: this.user.username,
+                    password: this.user.password,
+                },{
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(function (response) {
+                        if (response.data.code === 200) {
+                            alert("登陆成功");
+                            // 重定向到首页
+                            window.location.href = 'homepage.html';
+                        } else if (response.data.message === '输入错误次数过多，请稍后再试') {
+                            alert(response.data.message + '，请60秒后再次输入用户名及密码进行登录验证');
+                            // 禁用输入框
+                            document.getElementById('username').disabled = true;
+                            document.getElementById('password').disabled = true;
+                            // 等待 1 分钟
+                            setTimeout(function () {
+                                // 启用输入框
+                                document.getElementById('username').disabled = false;
+                                document.getElementById('password').disabled = false;
+                            }, 60000); // 60 秒
+                        }else{
+                            alert(response.data.message);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        alert(error.response.data.message);
+                    });
+            }
+        }
+    });
+
+</script>
+</body>
+</html>
