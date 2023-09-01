@@ -2,9 +2,9 @@
 #include<stdlib.h>
 #include"LinkStack.h"
 
-//Á´Õ»
+//é“¾æ ˆ
 
-//³õÊ¼»¯Õ»
+//åˆå§‹åŒ–æ ˆ
 Status initLStack(LinkStack* s) {
 	s->top = (StackNode*)malloc(sizeof(StackNode));
 	if (!s->top)
@@ -14,12 +14,12 @@ Status initLStack(LinkStack* s) {
 	return SUCCESS;
 }
 
-//ÅĞ¶ÏÕ»ÊÇ·ñÎª¿Õ
+//åˆ¤æ–­æ ˆæ˜¯å¦ä¸ºç©º
 Status isEmptyLStack(LinkStack* s) {
 	return s->count == 0;
 }
 
-//µÃµ½Õ»¶¥ÔªËØ
+//å¾—åˆ°æ ˆé¡¶å…ƒç´ 
 Status getTopLStack(LinkStack* s, ElemType* e) {
 	if (!s->top || s->count == 0)
 		return ERROR;
@@ -27,14 +27,14 @@ Status getTopLStack(LinkStack* s, ElemType* e) {
 	return SUCCESS;
 }
 
-//Çå¿ÕÕ»
+//æ¸…ç©ºæ ˆ
 Status clearLStack(LinkStack* s) {
-	LinkStackPtr temp, p = s->top->next;			//pÖ¸ÏòÕ»¶¥ÔªËØ
+	LinkStackPtr temp, p = s->top->next;			//pæŒ‡å‘æ ˆé¡¶å…ƒç´ 
 	if (!s->top)
 		return ERROR;
 	while (p) {
-		temp = p->next;             //±£ÁôÕ»¶¥ÔªËØµÄÏÂÒ»¸öÔªËØ
-		free(p);					//freeÕ»¶¥ÔªËØ
+		temp = p->next;             //ä¿ç•™æ ˆé¡¶å…ƒç´ çš„ä¸‹ä¸€ä¸ªå…ƒç´ 
+		free(p);					//freeæ ˆé¡¶å…ƒç´ 
 		p = temp;
 		s->count--;
 	}
@@ -45,9 +45,9 @@ Status clearLStack(LinkStack* s) {
 		return ERROR;
 }
 
-//Ïú»ÙÕ»
+//é”€æ¯æ ˆ
 Status destroyLStack(LinkStack* s) {
-	//Ğ´·¨Ò»
+	//å†™æ³•ä¸€
 	LinkStackPtr tempt, p = s->top->next;
 	if (!s->top)
 		return ERROR;
@@ -65,7 +65,7 @@ Status destroyLStack(LinkStack* s) {
 	else
 		return ERROR;
 
-	//Ğ´·¨¶ş
+	//å†™æ³•äºŒ
 	/*if (clearLStack(s)) {
 		free(s->top);
 		return SUCCESS;
@@ -74,7 +74,7 @@ Status destroyLStack(LinkStack* s) {
 	}*/
 }
 
-//¼ì²âÕ»³¤¶È
+//æ£€æµ‹æ ˆé•¿åº¦
 Status LStackLength(LinkStack* s, int* length) {
 	if (!s->top)
 		return ERROR;
@@ -82,7 +82,7 @@ Status LStackLength(LinkStack* s, int* length) {
 	return SUCCESS;
 }
 
-//ÈëÕ»
+//å…¥æ ˆ(æ³¨æ„å‚æ•°ä¸å‡ºæ ˆçš„ä¸åŒ)
 Status pushLStack(LinkStack* s, ElemType data) {
 	StackNode* p = NULL;
 	if (!s->top)
@@ -95,12 +95,12 @@ Status pushLStack(LinkStack* s, ElemType data) {
 	return SUCCESS;
 }
 
-//³öÕ»
+//å‡ºæ ˆ
 Status popLStack(LinkStack* s, ElemType* data) {
 	LinkStackPtr temp, p = s->top->next;
 	if (!s->top || isEmptyLStack(s))
 		return ERROR;
-	*data = p->data;						//³öÕ»µÄÔªËØ´æ´¢µ½ data
+	*data = p->data;						//å‡ºæ ˆçš„å…ƒç´ å­˜å‚¨åˆ° data
 	temp = p->next;
 	free(p);
 	s->top->next = temp;
@@ -108,15 +108,15 @@ Status popLStack(LinkStack* s, ElemType* data) {
 	return SUCCESS;
 }
 
-//´ÓÕ»¶¥¿ªÊ¼±éÀúÁ´Õ»
+//ä»æ ˆé¡¶å¼€å§‹éå†é“¾æ ˆ
 Status traverseLStack(LinkStack* s, void (*visit)(ElemType e)) {
 	if (!s->top || s->count == 0)
 		return ERROR;
-	printf("¸ÃÁ´Õ»ĞòÁĞÎª£º\n");
+	printf("è¯¥é“¾æ ˆåºåˆ—ä¸ºï¼š\n");
 	LinkStackPtr p = s->top->next;
 	while (p) {
-		visit(p->data);//°Ñº¯ÊıÓ¦ÓÃÓÚÁ´±íµÄÏî
-		p = p->next;//Ç°½øµ½ÏÂÒ»Ïî
+		visit(p->data);//æŠŠå‡½æ•°åº”ç”¨äºé“¾è¡¨çš„é¡¹
+		p = p->next;//å‰è¿›åˆ°ä¸‹ä¸€é¡¹
 	}
 	return SUCCESS;
 }
